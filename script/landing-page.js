@@ -1,4 +1,3 @@
-// Smooth scrolling to sections
 const menuLinks = document.querySelectorAll('nav a');
 
 menuLinks.forEach(link => {
@@ -12,7 +11,7 @@ menuLinks.forEach(link => {
 function smoothScrollTo(target) {
   const start = window.scrollY;
   const distance = target.offsetTop - start;
-  const duration = 2000;
+  const duration = 1000;
 
   let startTimestamp = null;
 
