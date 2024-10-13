@@ -3,13 +3,19 @@ const menuLinks = document.querySelectorAll('nav a');
 menuLinks.forEach(link => {
   link.addEventListener('click', (event) => {
     event.preventDefault();
-    const targetSection = document.getElementById(link.hash.slice(1));
-    
-    // Check if targetSection exists
-    if (targetSection) {
-      smoothScrollTo(targetSection);
+
+    // Check if the link has a hash and it's not empty
+    if (link.hash) {
+      const targetSection = document.getElementById(link.hash.slice(1));
+
+      // Check if targetSection exists
+      if (targetSection) {
+        smoothScrollTo(targetSection);
+      } else {
+        console.error(`Element with ID '${link.hash.slice(1)}' not found.`);
+      }
     } else {
-      console.error(`Element with ID '${link.hash.slice(1)}' not found.`);
+      console.error('The link does not have a valid hash target.');
     }
   });
 });
