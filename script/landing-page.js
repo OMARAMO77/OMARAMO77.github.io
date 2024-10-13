@@ -1,5 +1,5 @@
 // Debounce function to limit how often a function is called
-function debounce(func, wait = 20, immediate = true) {
+function debounce(func, wait = 10, immediate = true) {
   let timeout;
   return function() {
     const context = this, args = arguments;
@@ -14,34 +14,12 @@ function debounce(func, wait = 20, immediate = true) {
   };
 }
 
-// Smooth scrolling to section
-function smoothScrollTo(target, duration = 1000) {
-  const start = window.scrollY;
-  const distance = target.getBoundingClientRect().top;
-  let startTime = null;
-
-  function animation(currentTime) {
-    if (startTime === null) startTime = currentTime;
-    const timeElapsed = currentTime - startTime;
-    const run = ease(timeElapsed, start, distance, duration);
-    window.scrollTo(0, run);
-    if (timeElapsed < duration) requestAnimationFrame(animation);
-  }
-
-  // Ease function for smooth animation (ease-in-out)
-  function ease(t, b, c, d) {
-    t /= d / 2;
-    if (t < 1) return c / 2 * t * t + b;
-    t--;
-    return -c / 2 * (t * (t - 2) - 1) + b;
-  }
-
-  requestAnimationFrame(animation);
-}
-
-// ScrollSpy functionality to highlight active section in navbar
+// Scroll spy to highlight menu items based on scroll position
 function scrollSpy(navLinks) {
-  const sections = Array.from(navLinks).map(link => document.querySelector(link.hash));
+  const sections = Array.from(navLinks)
+    .filter(link => link.hash)
+    .map(link => document.querySelector(link.hash))
+    .filter(section => section !== null);
 
   function handleScroll() {
     const scrollPos = window.scrollY + window.innerHeight / 2;
@@ -57,52 +35,46 @@ function scrollSpy(navLinks) {
   handleScroll();  // Initialize scroll spy
 }
 
-// Detect if a link is external
-function isExternalLink(link) {
-  return link.hostname !== window.location.hostname;
-}
-
-// Set up event listeners for menu links
-function setupMenuLinks() {
-  const menuLinks = document.querySelectorAll('nav a');
-  
-  menuLinks.forEach(link => {
+// Smooth scrolling to section when menu link is clicked
+function setupMenuLinks(navLinks) {
+  navLinks.forEach(link => {
     link.addEventListener('click', (event) => {
-      // Check if the link is external
-      if (isExternalLink(link)) return; // Let external links work as normal
-
       event.preventDefault();
       const targetSection = document.querySelector(link.hash);
-      if (targetSection) smoothScrollTo(targetSection);
+      if (targetSection) {
+        window.scrollTo({
+          top: targetSection.offsetTop,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+}
+
+// Ensure that the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  // Show or hide the "Back to Top" button based on scroll position
+  const backToTopBtn = document.getElementById('backToTopBtn');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {  // Show the button after scrolling down 300px
+      backToTopBtn.style.display = 'block';
+    } else {
+      backToTopBtn.style.display = 'none';
+    }
+  });
+
+  // Smooth scroll to top when the "Back to Top" button is clicked
+  backToTopBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
     });
   });
 
-  // Activate scrollSpy to update active link based on scrolling
-  scrollSpy(menuLinks);
-}
-
-// Back to top button logic (optional)
-function setupBackToTopButton() {
-  const backToTopBtn = document.querySelector('#backToTopBtn');
-
-  function toggleBackToTop() {
-    if (window.scrollY > 300) {
-      backToTopBtn.classList.add('show');
-    } else {
-      backToTopBtn.classList.remove('show');
-    }
-  }
-
-  window.addEventListener('scroll', debounce(toggleBackToTop));
-
-  backToTopBtn.addEventListener('click', (event) => {
-    event.preventDefault();
-    smoothScrollTo(document.body, 800);
-  });
-}
-
-// Initialize functions
-document.addEventListener('DOMContentLoaded', () => {
-  setupMenuLinks();
-  setupBackToTopButton();  // If a back-to-top button is used
+  // Initialize scroll spy and menu links
+  const navLinks = document.querySelectorAll('nav a');
+  scrollSpy(navLinks);
+  setupMenuLinks(navLinks);
 });
