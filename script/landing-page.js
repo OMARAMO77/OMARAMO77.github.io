@@ -38,16 +38,19 @@ function scrollSpy(navLinks) {
 // Smooth scrolling to section when menu link is clicked
 function setupMenuLinks(navLinks) {
   navLinks.forEach(link => {
-    link.addEventListener('click', (event) => {
-      event.preventDefault();
-      const targetSection = document.querySelector(link.hash);
-      if (targetSection) {
-        window.scrollTo({
-          top: targetSection.offsetTop,
-          behavior: 'smooth'
-        });
-      }
-    });
+    // Only add event listeners for links with valid hash values
+    if (link.hash && document.querySelector(link.hash)) {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        const targetSection = document.querySelector(link.hash);
+        if (targetSection) {
+          window.scrollTo({
+            top: targetSection.offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
   });
 }
 
