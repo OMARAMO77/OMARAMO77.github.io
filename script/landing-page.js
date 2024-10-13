@@ -4,7 +4,13 @@ menuLinks.forEach(link => {
   link.addEventListener('click', (event) => {
     event.preventDefault();
     const targetSection = document.getElementById(link.hash.slice(1));
-    smoothScrollTo(targetSection);
+    
+    // Check if targetSection exists
+    if (targetSection) {
+      smoothScrollTo(targetSection);
+    } else {
+      console.error(`Element with ID '${link.hash.slice(1)}' not found.`);
+    }
   });
 });
 
