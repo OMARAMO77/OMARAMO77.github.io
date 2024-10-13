@@ -2,9 +2,12 @@ const menuLinks = document.querySelectorAll('nav a');
 
 menuLinks.forEach(link => {
   link.addEventListener('click', (event) => {
-    event.preventDefault();
-    const targetSection = document.getElementById(link.hash.slice(1));
-    smoothScrollTo(targetSection);
+    // Skip preventing default for external links
+    if (link.id !== 'getStartedBtn') {
+      event.preventDefault();
+      const targetSection = document.getElementById(link.hash.slice(1));
+      smoothScrollTo(targetSection);
+    }
   });
 });
 
